@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.util.Locale;
 
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     private SeekBar sPitch,sSpeed;
     TextToSpeech textToSpeech;
+    TextView pitchCount,speedCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +32,14 @@ public class MainActivity extends AppCompatActivity {
         button = findViewById(R.id.button);
         sSpeed = findViewById(R.id.speed);
         sPitch = findViewById(R.id.pitch);
+        pitchCount = findViewById(R.id.pitchCount);
+        speedCount = findViewById(R.id.speedCount);
 
         textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-
                 if (status == TextToSpeech.SUCCESS){
-                    int result  = textToSpeech.setLanguage(Locale.US);
-
+                    int result = textToSpeech.setLanguage(Locale.CANADA);
                     if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
                         Log.e("TTS","Language not supported");
                     }else {
@@ -49,6 +51,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        sPitch.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pitchCount.setText(""+progress+"%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        sSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                speedCount.setText(""+progress+"%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,20 +93,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
     }
+
     private void speak(){
-        String Text = editText.getText().toString();
+        float pitch = (float) sPitch.getProgress()/50;
+        if (pitch<0) pitch=0.1f;
 
-        float pitch =(float) sPitch.getProgress()/50;
-        if (pitch<0) pitch = 0.1f;
-
-        float speed =(float) sSpeed.getProgress()/50;
+        float speed = (float) sSpeed.getProgress()/50;
         if (speed<0) speed = 0.1f;
 
         textToSpeech.setPitch(pitch);
         textToSpeech.setSpeechRate(speed);
 
-        textToSpeech.speak(Text,TextToSpeech.QUEUE_FLUSH,null,null);
+        textToSpeech.speak(editText.getText().toString(),TextToSpeech.QUEUE_FLUSH,null,null);
+
     }
 
     @Override
