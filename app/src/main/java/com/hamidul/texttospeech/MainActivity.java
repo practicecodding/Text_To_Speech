@@ -111,6 +111,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        if (textToSpeech!=null){
+            textToSpeech.stop();
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         if (textToSpeech!=null){
             textToSpeech.stop();
